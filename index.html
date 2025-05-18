@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>YakoMatch</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #000;
+      color: #ffd700;
+    }
+    .hidden {
+      display: none;
+    }
+    .top-bar {
+      background: #222;
+      color: #ffd700;
+      padding: 15px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+    .container {
+      padding: 80px 20px 80px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 5px;
+      background: #ffd700;
+      color: black;
+      border: none;
+    }
+    nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #222;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+    }
+    nav button {
+      background: none;
+      color: #ffd700;
+      font-weight: bold;
+    }
+    .section {
+      margin-top: 20px;
+      border: 2px solid #ffd700;
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 15px;
+    }
+    .app {
+      background: #111;
+      padding: 15px 10px 40px 10px;
+      border-radius: 5px;
+      text-align: center;
+      position: relative;
+      border: 2px solid #ffd700;
+      font-size: 14px;
+      color: #ffd700;
+    }
+    .app img {
+      width: 100%;
+      border-radius: 5px;
+      margin-bottom: 8px;
+    }
+    .small-btn {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      padding: 3px 6px;
+      font-size: 12px;
+      background: #ffd700;
+      color: black;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header class="top-bar">YakoMatch</header>
+
+  <!-- Splash Page -->
+  <div id="splash-page" class="container" style="text-align:center; padding-top: 100px;">
+    <h1 style="font-size: 36px;">مرحبا بك في YakoMatch</h1>
+    <p style="margin: 20px 0;">أفضل تطبيق لمشاهدة المباريات والبث المباشر</p>
+    <button onclick="startApp()" style="font-size:18px;">ابدأ</button>
+  </div>
+
+  <!-- Home Page -->
+  <div id="home-page" class="container hidden">
+    <h2>Channel Sections</h2>
+    <div class="section" onclick="showSubPage('bein_fullhd')">Bein Sport Full HD</div>
+    <div class="section" onclick="showSubPage('bein_hd')">Bein Sport HD</div>
+    <div class="section" onclick="showSubPage('bein_sd')">Bein Sport SD</div>
+    <div class="section" onclick="showSubPage('ssc_fullhd')">SSC Sport Full HD</div>
+    <div class="section" onclick="showSubPage('ssc_hd')">SSC Sport HD</div>
+    <div class="section" onclick="showSubPage('ssc_sd')">SSC Sport SD</div>
+    <div class="section" onclick="showSubPage('bein_movie')">Bein Movie</div>
+  </div>
+
+  <!-- Favorites Page -->
+  <div id="favorites-page" class="container hidden">
+    <h2>Favorites</h2>
+    <div id="favorites-list" class="grid"></div>
+  </div>
+
+  <!-- Settings Page -->
+  <div id="settings-page" class="container hidden">
+    <h2>Settings</h2>
+    <div class="section">
+      <button onclick="alert('Match notifications')">Notifications</button>
+    </div>
+    <div class="section">
+      <button onclick="shareApp()">Share App</button>
+    </div>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav id="bottom-nav" class="hidden">
+    <button onclick="showPage('home')">Home</button>
+    <button onclick="showPage('favorites')">Favorites</button>
+    <button onclick="showPage('settings')">Settings</button>
+  </nav>
+
+  <script>
+    const sections = [
+      'bein_fullhd', 'bein_hd', 'bein_sd',
+      'ssc_fullhd', 'ssc_hd', 'ssc_sd',
+      'bein_movie'
+    ];
+
+    const appData = {
+      bein_fullhd: [
+        { name: 'Bein sport 1', img: 'https://c.top4top.io/p_342461x6e8.png', stream: '#' },
+        { name: 'Bein sport 2', img: 'https://b.top4top.io/p_3424c799p7.png', stream: '#' },
+        { name: 'Bein sport 3', img: 'https://a.top4top.io/p_34248lbcc6.png', stream: '#' },
+        { name: 'Bein sport 4', img: 'https://d.top4top.io/p_3424jvf2f0.jpeg', stream: '#' },
+        { name: 'Bein sport 5', img: 'https://e.top4top.io/p_3424eq5er1.jpeg', stream: '#' },
+        { name: 'Bein sport 6', img: 'https://f.top4top.io/p_3424hyrpv2.png', stream: '#' },
+        { name: 'Bein sport 7', img: 'https://g.top4top.io/p_3424tzo2t3.png', stream: '#' },
+        { name: 'Bein sport 8', img: 'https://h.top4top.io/p_3424qw7kz4.png', stream: '#' },
+        { name: 'Bein sport 9', img: 'https://i.top4top.io/p_3424x3zqp5.png', stream: '#' },
+      ],
+      bein_hd: [], bein_sd: [],
+      ssc_fullhd: Array(9).fill(null).map((_, i) => ({
+        name: `SSC Sport ${i + 1}`,
+        img: 'https://f.top4top.io/p_34247vuqt0.png',
+        stream: '#'
+      })),
+      ssc_hd: Array(9).fill(null).map((_, i) => ({
+        name: `SSC Sport ${i + 1}`,
+        img: 'https://f.top4top.io/p_34247vuqt0.png',
+        stream: '#'
+      })),
+      ssc_sd: Array(9).fill(null).map((_, i) => ({
+        name: `SSC Sport ${i + 1}`,
+        img: 'https://f.top4top.io/p_34247vuqt0.png',
+        stream: '#'
+      })),
+      bein_movie: Array(9).fill(null).map((_, i) => ({
+        name: `Bein Movie ${i + 1}`,
+        img: 'https://c.top4top.io/p_3424iawg70.png',
+        stream: '#'
+      }))
+    };
+
+    sections.forEach((section) => {
+      const container = document.createElement('div');
+      container.id = section + '-page';
+      container.className = 'container hidden';
+      container.innerHTML = `
+        <h2>${section.replace(/_/g, ' ').toUpperCase()}</h2>
+        <div class="grid">
+          ${appData[section]
+            .map(app => `
+              <div class="app">
+                <img src="${app.img}" alt="${app.name}" />
+                <div>${app.name}</div>
+                <button class="small-btn" onclick="addToFavorites('${app.name}')">+</button>
+              </div>
+            `).join('')}
+        </div>
+        <button style="margin-top:20px;" onclick="showPage('home')">Back</button>
+      `;
+      document.body.appendChild(container);
+    });
+
+    let favorites = [];
+
+    function startApp() {
+      document.getElementById('splash-page').classList.add('hidden');
+      showPage('home');
+      document.getElementById('bottom-nav').classList.remove('hidden');
+    }
+
+    function showPage(page) {
+      const allPages = ['splash', 'home', 'favorites', 'settings', ...sections.map(s => s + '-page')];
+      allPages.forEach(id => {
+        const el = document.getElementById(id) || document.getElementById(id + '-page');
+        if (el) el.classList.add('hidden');
+      });
+      const pageEl = document.getElementById(page) || document.getElementById(page + '-page');
+      if (pageEl) pageEl.classList.remove('hidden');
+    }
+
+    function showSubPage(section) {
+      showPage(section + '-page');
+    }
+
+    function addToFavorites(appName) {
+      if (!favorites.includes(appName)) {
+        favorites.push(appName);
+        updateFavorites();
+      }
+    }
+
+    function removeFromFavorites(appName) {
+      favorites = favorites.filter(name => name !== appName);
+      updateFavorites();
+    }
+
+    function updateFavorites() {
+      const container = document.getElementById('favorites-list');
+      container.innerHTML = '';
+      favorites.forEach(name => {
+        let foundApp = null;
+        for (const sec of sections) {
+          const app = appData[sec].find(a => a.name === name);
+          if (app) {
+            foundApp = app;
+            break;
+          }
+        }
+        if (foundApp) {
+          const div = document.createElement('div');
+          div.className = 'app';
+          div.innerHTML = `
+            <a href="${foundApp.stream}">
+              <img src="${foundApp.img}" alt="${foundApp.name}" />
+            </a>
+            <div>${foundApp.name}</div>
+            <button class="small-btn" onclick="removeFromFavorites('${foundApp.name}')">-</button>
+          `;
+          container.appendChild(div);
+        }
+      });
+    }
+
+    function shareApp() {
+      const shareLink = 'https://yakomatch.com';
+      if (navigator.share) {
+        navigator.share({ title: 'YakoMatch', text: 'Check out YakoMatch!', url: shareLink });
+      } else {
+        window.open(shareLink, '_blank');
+      }
+    }
+
+    window.onload = () => {
+      document.documentElement.lang = 'en';
+      document.documentElement.dir = 'ltr';
+      showPage('splash-page');
+      setTimeout(() => {
+        if (!document.getElementById('splash-page').classList.contains('hidden')) {
+          startApp();
+        }
+      }, 3000);
+    };
+  </script>
+</body>
+</html>
