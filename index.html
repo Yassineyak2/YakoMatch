@@ -1,289 +1,289 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
+  <title>Onside Live</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>YakoMatch</title>
   <style>
-    body {
+    * { box-sizing: border-box; }
+    body, html {
       margin: 0;
-      font-family: sans-serif;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
       background-color: #000;
-      color: #ffd700;
+      color: #fff;
     }
-    .hidden {
-      display: none;
-    }
-    .top-bar {
-      background: #222;
-      color: #ffd700;
-      padding: 15px;
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
+    .header {
       position: fixed;
       top: 0;
       width: 100%;
-      z-index: 1000;
+      padding: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      background: #000;
+      border-bottom: 2px solid #bfa750;
+      color: #bfa750;
+      z-index: 1002;
     }
-    .container {
-      padding: 80px 20px 80px;
-      box-sizing: border-box;
-    }
-    button {
-      padding: 10px;
-      margin: 5px 0;
-      width: 100%;
-      box-sizing: border-box;
-      border-radius: 5px;
-      background: #ffd700;
-      color: black;
-      border: none;
-    }
-    nav {
+    .tabs {
+      display: flex;
+      background-color: #000;
+      border-top: 2px solid #bfa750;
       position: fixed;
       bottom: 0;
       width: 100%;
-      background: #222;
-      display: flex;
-      justify-content: space-around;
-      padding: 10px 0;
+      z-index: 1002;
     }
-    nav button {
-      background: none;
-      color: #ffd700;
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      font-size: 18px;
+      color: #999;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+    .tab.active {
+      color: #bfa750;
+      border-top: 3px solid #bfa750;
+      background-color: #1a1a1a;
+    }
+    .content-section {
+      display: none;
+      overflow-y: auto;
+      padding: 80px 15px 70px;
+      height: calc(100vh - 115px);
+    }
+    .content-section.active {
+      display: block;
+    }
+    .match-card {
+      background: #1a1a1a;
+      margin: 15px 0;
+      padding: 15px;
+      border-radius: 12px;
+      border: 2px solid #bfa750;
+    }
+    .match-title {
+      text-align: center;
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #bfa750;
       font-weight: bold;
     }
-    .section {
-      margin-top: 20px;
-      border: 2px solid #ffd700;
-      padding: 10px;
-      border-radius: 10px;
-      cursor: pointer;
+    .teams {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .grid {
+    .team {
+      text-align: center;
+    }
+    .team img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid #bfa750;
+    }
+    .status {
+      background: transparent;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      color: #bfa750;
+      border: 2px solid #bfa750;
+      font-weight: bold;
+      transition: 0.3s;
+      user-select: none;
+    }
+    .status:hover {
+      background-color: #bfa750;
+      color: #000;
+    }
+    #grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
       gap: 15px;
     }
-    .app {
-      background: #111;
-      padding: 15px 10px 40px 10px;
-      border-radius: 5px;
+    .channel-card {
       text-align: center;
-      position: relative;
-      border: 2px solid #ffd700;
-      font-size: 14px;
-      color: #ffd700;
-    }
-    .app img {
-      width: 100%;
-      border-radius: 5px;
-      margin-bottom: 8px;
-    }
-    .small-btn {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      padding: 3px 6px;
-      font-size: 12px;
-      background: #ffd700;
-      color: black;
-      border: none;
-      border-radius: 3px;
       cursor: pointer;
+      background-color: #1a1a1a;
+      border: 2px solid #bfa750;
+      border-radius: 12px;
+      padding: 12px;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .channel-card:hover {
+      transform: scale(1.05);
+      border-color: #fff;
+    }
+    .channel-logo {
+      width: 110px;
+      height: 110px;
+      object-fit: contain;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      border: 2px solid #bfa750;
+      background-color: #000;
+      padding: 5px;
+    }
+    .channel-name {
+      font-size: 15px;
+      color: #bfa750;
+      font-weight: bold;
+    }
+    #player-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.9);
+      z-index: 1003;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    #player-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    #player-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 12px;
+    }
+    #player-close {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #bfa750;
+      border: none;
+      color: #000;
+      font-weight: bold;
+      font-size: 18px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 1004;
+      user-select: none;
     }
   </style>
 </head>
 <body>
-  <header class="top-bar">YakoMatch</header>
 
-  <!-- Splash Page -->
-  <div id="splash-page" class="container" style="text-align:center; padding-top: 100px;">
-    <h1 style="font-size: 36px;">مرحبا بك في YakoMatch</h1>
-    <p style="margin: 20px 0;">أفضل تطبيق لمشاهدة المباريات والبث المباشر</p>
-    <button onclick="startApp()" style="font-size:18px;">ابدأ</button>
-  </div>
+<div class="header">Onside Live</div>
 
-  <!-- Home Page -->
-  <div id="home-page" class="container hidden">
-    <h2>Channel Sections</h2>
-    <div class="section" onclick="showSubPage('bein_fullhd')">Bein Sport Full HD</div>
-    <div class="section" onclick="showSubPage('bein_hd')">Bein Sport HD</div>
-    <div class="section" onclick="showSubPage('bein_sd')">Bein Sport SD</div>
-    <div class="section" onclick="showSubPage('ssc_fullhd')">SSC Sport Full HD</div>
-    <div class="section" onclick="showSubPage('ssc_hd')">SSC Sport HD</div>
-    <div class="section" onclick="showSubPage('ssc_sd')">SSC Sport SD</div>
-    <div class="section" onclick="showSubPage('bein_movie')">Bein Movie</div>
-  </div>
-
-  <!-- Favorites Page -->
-  <div id="favorites-page" class="container hidden">
-    <h2>Favorites</h2>
-    <div id="favorites-list" class="grid"></div>
-  </div>
-
-  <!-- Settings Page -->
-  <div id="settings-page" class="container hidden">
-    <h2>Settings</h2>
-    <div class="section">
-      <button onclick="alert('Match notifications')">Notifications</button>
+<div id="matches" class="content-section active">
+  <div class="match-card">
+    <div class="match-title">نهائي كأس أمم إفريقيا | 🏆</div>
+    <div class="teams">
+      <div class="team">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Coat_of_arms_of_Morocco.svg" alt="المغرب" />
+        <div>المغرب</div>
+      </div>
+      <a href="#" class="status" data-link="https://example.com/stream1">بث مباشر</a>
+      <div class="team">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/af/Flag_of_South_Africa.svg" alt="جنوب إفريقيا" />
+        <div>جنوب إفريقيا</div>
+      </div>
     </div>
-    <div class="section">
-      <button onclick="shareApp()">Share App</button>
+    <div class="footer" style="display:flex; justify-content: space-between; font-size:14px; margin-top:10px; color:#999;">
+      <span>Bein Sport 6</span>
+      <span>جواد بدة</span>
     </div>
   </div>
+</div>
 
-  <!-- Navigation Bar -->
-  <nav id="bottom-nav" class="hidden">
-    <button onclick="showPage('home')">Home</button>
-    <button onclick="showPage('favorites')">Favorites</button>
-    <button onclick="showPage('settings')">Settings</button>
-  </nav>
+<div id="channels" class="content-section">
+  <div id="grid"></div>
+</div>
 
-  <script>
-    const sections = [
-      'bein_fullhd', 'bein_hd', 'bein_sd',
-      'ssc_fullhd', 'ssc_hd', 'ssc_sd',
-      'bein_movie'
-    ];
+<div id="player-overlay">
+  <div id="player-container">
+    <button id="player-close">X</button>
+    <iframe src="" allowfullscreen allow="autoplay" frameborder="0"></iframe>
+  </div>
+</div>
 
-    const appData = {
-      bein_fullhd: [
-        { name: 'Bein sport 1', img: 'https://c.top4top.io/p_342461x6e8.png', stream: '#' },
-        { name: 'Bein sport 2', img: 'https://b.top4top.io/p_3424c799p7.png', stream: '#' },
-        { name: 'Bein sport 3', img: 'https://a.top4top.io/p_34248lbcc6.png', stream: '#' },
-        { name: 'Bein sport 4', img: 'https://d.top4top.io/p_3424jvf2f0.jpeg', stream: '#' },
-        { name: 'Bein sport 5', img: 'https://e.top4top.io/p_3424eq5er1.jpeg', stream: '#' },
-        { name: 'Bein sport 6', img: 'https://f.top4top.io/p_3424hyrpv2.png', stream: '#' },
-        { name: 'Bein sport 7', img: 'https://g.top4top.io/p_3424tzo2t3.png', stream: '#' },
-        { name: 'Bein sport 8', img: 'https://h.top4top.io/p_3424qw7kz4.png', stream: '#' },
-        { name: 'Bein sport 9', img: 'https://i.top4top.io/p_3424x3zqp5.png', stream: '#' },
-      ],
-      bein_hd: [], bein_sd: [],
-      ssc_fullhd: Array(9).fill(null).map((_, i) => ({
-        name: `SSC Sport ${i + 1}`,
-        img: 'https://f.top4top.io/p_34247vuqt0.png',
-        stream: '#'
-      })),
-      ssc_hd: Array(9).fill(null).map((_, i) => ({
-        name: `SSC Sport ${i + 1}`,
-        img: 'https://f.top4top.io/p_34247vuqt0.png',
-        stream: '#'
-      })),
-      ssc_sd: Array(9).fill(null).map((_, i) => ({
-        name: `SSC Sport ${i + 1}`,
-        img: 'https://f.top4top.io/p_34247vuqt0.png',
-        stream: '#'
-      })),
-      bein_movie: Array(9).fill(null).map((_, i) => ({
-        name: `Bein Movie ${i + 1}`,
-        img: 'https://c.top4top.io/p_3424iawg70.png',
-        stream: '#'
-      }))
-    };
+<div class="tabs">
+  <div class="tab active" onclick="showTab('matches')">المباريات</div>
+  <div class="tab" onclick="showTab('channels')">القنوات</div>
+</div>
 
-    sections.forEach((section) => {
-      const container = document.createElement('div');
-      container.id = section + '-page';
-      container.className = 'container hidden';
-      container.innerHTML = `
-        <h2>${section.replace(/_/g, ' ').toUpperCase()}</h2>
-        <div class="grid">
-          ${appData[section]
-            .map(app => `
-              <div class="app">
-                <img src="${app.img}" alt="${app.name}" />
-                <div>${app.name}</div>
-                <button class="small-btn" onclick="addToFavorites('${app.name}')">+</button>
-              </div>
-            `).join('')}
-        </div>
-        <button style="margin-top:20px;" onclick="showPage('home')">Back</button>
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if (id === 'matches') {
+      document.querySelectorAll('.tab')[0].classList.add('active');
+    } else {
+      document.querySelectorAll('.tab')[1].classList.add('active');
+    }
+  }
+
+  const channels = [
+    ["Bein Sport 1", "https://b.top4top.io/p_3426r90u41.jpg", "http://het116a.4rouwanda-shop.store/live/918454578001/index.m3u8"],
+    ["Bein Sport 2", "https://c.top4top.io/p_34267x7as2.jpg", "https://example.com/stream2"],
+    ["Bein Sport 3", "https://d.top4top.io/p_34264rvyx3.jpg", "https://example.com/stream3"],
+    ["Bein Sport 4", "https://a.top4top.io/p_3426r67e44.jpg", "https://example.com/stream4"],
+    ["Bein Sport 5", "https://b.top4top.io/p_3426ausbv5.jpg", "https://example.com/stream5"],
+    ["Bein Sport 6", "https://c.top4top.io/p_3426clpo56.jpg", "https://example.com/stream6"],
+    ["SSC Sport 1", "https://d.top4top.io/p_3426q6ivt7.jpg", "https://example.com/ssc1"],
+    ["SSC Sport 2", "https://d.top4top.io/p_3426q6ivt7.jpg", "https://example.com/ssc2"],
+    ["SSC Sport 3", "https://d.top4top.io/p_3426q6ivt7.jpg", "https://example.com/ssc3"],
+    ["Al Aoula Inter", "https://d.top4top.io/p_34268qf8y1.jpg", "https://example.com/aoula"],
+    ["Al Maghribia", "https://f.top4top.io/p_3426otfku9.jpg", "https://example.com/maghribia"],
+    ["2M Maroc", "https://e.top4top.io/p_34268d4t18.jpg", "https://example.com/2m"],
+    ["Arryadia", "https://g.top4top.io/p_3426bslcl10.jpg", "https://example.com/arryadia"]
+  ];
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById("grid");
+    channels.forEach(([name, logo, link]) => {
+      const div = document.createElement("div");
+      div.className = "channel-card";
+      div.innerHTML = `
+        <img class="channel-logo" src="${logo}" alt="${name}" />
+        <div class="channel-name">${name}</div>
       `;
-      document.body.appendChild(container);
+      div.onclick = () => openPlayer(link);
+      container.appendChild(div);
     });
 
-    let favorites = [];
-
-    function startApp() {
-      document.getElementById('splash-page').classList.add('hidden');
-      showPage('home');
-      document.getElementById('bottom-nav').classList.remove('hidden');
-    }
-
-    function showPage(page) {
-      const allPages = ['splash', 'home', 'favorites', 'settings', ...sections.map(s => s + '-page')];
-      allPages.forEach(id => {
-        const el = document.getElementById(id) || document.getElementById(id + '-page');
-        if (el) el.classList.add('hidden');
+    document.querySelectorAll('.status').forEach(el => {
+      el.addEventListener('click', e => {
+        e.preventDefault();
+        const url = el.getAttribute('data-link');
+        openPlayer(url);
       });
-      const pageEl = document.getElementById(page) || document.getElementById(page + '-page');
-      if (pageEl) pageEl.classList.remove('hidden');
-    }
+    });
+  });
 
-    function showSubPage(section) {
-      showPage(section + '-page');
-    }
+  function openPlayer(url) {
+    const overlay = document.getElementById('player-overlay');
+    const iframe = overlay.querySelector('iframe');
+    iframe.src = url;
+    overlay.style.display = 'flex';
+  }
 
-    function addToFavorites(appName) {
-      if (!favorites.includes(appName)) {
-        favorites.push(appName);
-        updateFavorites();
-      }
-    }
+  document.getElementById('player-close').addEventListener('click', () => {
+    const overlay = document.getElementById('player-overlay');
+    const iframe = overlay.querySelector('iframe');
+    iframe.src = '';
+    overlay.style.display = 'none';
+  });
+</script>
 
-    function removeFromFavorites(appName) {
-      favorites = favorites.filter(name => name !== appName);
-      updateFavorites();
-    }
-
-    function updateFavorites() {
-      const container = document.getElementById('favorites-list');
-      container.innerHTML = '';
-      favorites.forEach(name => {
-        let foundApp = null;
-        for (const sec of sections) {
-          const app = appData[sec].find(a => a.name === name);
-          if (app) {
-            foundApp = app;
-            break;
-          }
-        }
-        if (foundApp) {
-          const div = document.createElement('div');
-          div.className = 'app';
-          div.innerHTML = `
-            <a href="${foundApp.stream}">
-              <img src="${foundApp.img}" alt="${foundApp.name}" />
-            </a>
-            <div>${foundApp.name}</div>
-            <button class="small-btn" onclick="removeFromFavorites('${foundApp.name}')">-</button>
-          `;
-          container.appendChild(div);
-        }
-      });
-    }
-
-    function shareApp() {
-      const shareLink = 'https://yakomatch.com';
-      if (navigator.share) {
-        navigator.share({ title: 'YakoMatch', text: 'Check out YakoMatch!', url: shareLink });
-      } else {
-        window.open(shareLink, '_blank');
-      }
-    }
-
-    window.onload = () => {
-      document.documentElement.lang = 'en';
-      document.documentElement.dir = 'ltr';
-      showPage('splash-page');
-      setTimeout(() => {
-        if (!document.getElementById('splash-page').classList.contains('hidden')) {
-          startApp();
-        }
-      }, 3000);
-    };
-  </script>
 </body>
 </html>
